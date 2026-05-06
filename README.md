@@ -32,4 +32,4 @@ alya: /shoppingcart (ejs + route)
 
 zeynep: /products page(ejs + route)
 
-alp: sql, docker, .md's, /login n /signup
+alp: sql, docker, .md's, /login n /signup 
