@@ -13,6 +13,9 @@ it will start running in localhost:3000 if u don't change anything
 if u alr have applications running in the ports, it won't work. Check the env files to see which ports are being used 
 
 ## for developers
+
+`docker compose down -v`
+
 if u don't know what ur going to do check designdecisions n projectsummary markdown files
 
 also we use phpmyadmin for database, and docker auto imports sql files 
