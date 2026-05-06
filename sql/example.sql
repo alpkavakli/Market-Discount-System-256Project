@@ -1,46 +1,34 @@
---Bu album diye bir tablo oluşturuyor, örnek olsun diy ekodyum
-
--- phpMyAdmin SQL Dump 
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Anamakine: 127.0.0.1:3306
--- Üretim Zamanı: 25 Nis 2025, 14:23:03
--- Sunucu sürümü: 9.1.0
--- PHP Sürümü: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Veritabanı: `test`
---
-
--- --------------------------------------------------------
-
---
--- Tablo için tablo yapısı `album`
---
-
-DROP TABLE IF EXISTS `album`;
-CREATE TABLE IF NOT EXISTS `album` (
+DROP TABLE IF EXISTS `MarketUser`;
+CREATE TABLE IF NOT EXISTS `MarketUser` ( --Email: “Tok-Market@gmail.com”, Name: “Tok Market”, Password: “1234”, City: “Ankara”, District: “Bilkent”
   `id` int NOT NULL AUTO_INCREMENT,
-  `original` varchar(100) COLLATE utf8mb4_turkish_ci NOT NULL,
-  `filename` varchar(100) COLLATE utf8mb4_turkish_ci NOT NULL,
-  `tags` varchar(200) COLLATE utf8mb4_turkish_ci NOT NULL,
+  `email` varchar(50) COLLATE utf8mb4_turkish_ci NOT NULL,
+  `marketName` varchar(50) COLLATE utf8mb4_turkish_ci NOT NULL,
+  `password` varchar(100) COLLATE utf8mb4_turkish_ci NOT NULL,
+  `city` varchar(50) COLLATE utf8mb4_turkish_ci NOT NULL,
+  `district` varchar(50) COLLATE utf8mb4_turkish_ci NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_turkish_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_turkish_ci;
 
+DROP TABLE IF EXISTS `ConsumerUser`;
+CREATE TABLE IF NOT EXISTS `ConsumerUser` ( --Email: “Tok-Market@gmail.com”, Name: “Tok Market”, Password: “1234”, City: “Ankara”, District: “Bilkent”
+  `id` int NOT NULL AUTO_INCREMENT,
+  `email` varchar(50) COLLATE utf8mb4_turkish_ci NOT NULL,
+  `fullName` varchar(100) COLLATE utf8mb4_turkish_ci NOT NULL,
+  `password` varchar(100) COLLATE utf8mb4_turkish_ci NOT NULL,
+  `city` varchar(50) COLLATE utf8mb4_turkish_ci NOT NULL,
+  `district` varchar(50) COLLATE utf8mb4_turkish_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_turkish_ci;
 --
--- Tablo döküm verisi `album`
+-- Tablo döküm verisi `Market`
 --
 
 COMMIT;
