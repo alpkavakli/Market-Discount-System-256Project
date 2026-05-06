@@ -5,4 +5,8 @@ const router = express.Router()//it returns a router object which is almost simi
 router.use(express.json()) //if the content is json it parses it and adds it to req body
 
 
+router.get("/", (req, res) => {
+    res.render("login_view")
+})
+
 export default router;

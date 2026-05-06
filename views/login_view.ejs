@@ -1,2 +1,69 @@
 //When a market user logs in, all expired products in the list should be clearly marked, so that the user is aware of products that have passed their expiration date.
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login – Discount Marketplace</title>
+</head>
+<body>
+
+  <h1>Login</h1>
+
+  <% if (typeof error !== 'undefined' && error) { %>
+    <p style="color:red;"><%= error %></p>
+  <% } %>
+
+  <form action="/login" method="POST">
+    <div>
+      <label for="email">Email</label><br/>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        value="<%= typeof formData !== 'undefined' ? formData.email : '' %>"
+        required
+      />
+    </div>
+
+    <div>
+      <label for="password">Password</label><br/>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        required
+      />
+    </div>
+
+    <div>
+      <label>I am a:</label><br/>
+      <label>
+        <input
+          type="radio"
+          name="user_type"
+          value="consumer"
+          <%= (typeof formData !== 'undefined' && formData.user_type === 'market') ? '' : 'checked' %>
+        />
+        Consumer
+      </label>
+      <label>
+        <input
+          type="radio"
+          name="user_type"
+          value="market"
+          <%= (typeof formData !== 'undefined' && formData.user_type === 'market') ? 'checked' : '' %>
+        />
+        Market
+      </label>
+    </div>
+
+    <br/>
+    <button type="submit">Login</button>
+  </form>
+
+  <p>Don't have an account? <a href="/signup">Sign up</a></p>
+
+</body>
+</html>

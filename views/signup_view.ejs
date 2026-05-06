@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up – Discount Marketplace</title>
+</head>
+<body>
+
+  <h1>Sign Up</h1>
+
+  <% if (typeof error !== 'undefined' && error) { %>
+    <p style="color:red;"><%= error %></p>
+  <% } %>
+
+  <%
+    const f = (typeof formData !== 'undefined') ? formData : {};
+    const userType = f.user_type || 'consumer';
+  %>
+
+  <form action="/signup" method="POST">
+
+    <!-- User type selector -->
+    <div>
+      <label>I am a:</label><br/>
+      <label>
+        <input
+          type="radio"
+          name="user_type"
+          value="consumer"
+          <%= userType === 'consumer' ? 'checked' : '' %>
+        />
+        Consumer
+      </label>
+      <label>
+        <input
+          type="radio"
+          name="user_type"
+          value="market"
+          <%= userType === 'market' ? 'checked' : '' %>
+        />
+        Market
+      </label>
+    </div>
+
+    <br/>
+
+    <!-- Consumer-only field -->
+    <div id="field-full-name">
+      <label for="full_name">Full Name</label><br/>
+      <input
+        type="text"
+        id="full_name"
+        name="full_name"
+        value="<%= f.full_name || '' %>"
+      />
+    </div>
+
+    <!-- Market-only field -->
+    <div id="field-market-name">
+      <label for="market_name">Market Name</label><br/>
+      <input
+        type="text"
+        id="market_name"
+        name="market_name"
+        value="<%= f.market_name || '' %>"
+      />
+    </div>
+
+    <div>
+      <label for="email">Email</label><br/>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        value="<%= f.email || '' %>"
+        required
+      />
+    </div>
+
+    <div>
+      <label for="password">Password</label><br/>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        required
+      />
+    </div>
+
+    <div>
+      <label for="city">City</label><br/>
+      <input
+        type="text"
+        id="city"
+        name="city"
+        value="<%= f.city || '' %>"
+        required
+      />
+    </div>
+
+    <div>
+      <label for="district">District</label><br/>
+      <input
+        type="text"
+        id="district"
+        name="district"
+        value="<%= f.district || '' %>"
+        required
+      />
+    </div>
+
+    <br/>
+    <button type="submit">Create Account</button>
+  </form>
+
+  <p>Already have an account? <a href="/login">Login</a></p>
+
+  <script>
+    const radios = document.querySelectorAll('input[name="user_type"]');
+    const fieldFullName = document.getElementById('field-full-name');
+    const fieldMarketName = document.getElementById('field-market-name');
+
+    function toggleFields() {
+      const selected = document.querySelector('input[name="user_type"]:checked').value;
+      if (selected === 'consumer') {
+        fieldFullName.style.display = 'block';
+        fieldMarketName.style.display = 'none';
+        document.getElementById('full_name').required = true;
+        document.getElementById('market_name').required = false;
+      } else {
+        fieldFullName.style.display = 'none';
+        fieldMarketName.style.display = 'block';
+        document.getElementById('full_name').required = false;
+        document.getElementById('market_name').required = true;
+      }
+    }
+
+    radios.forEach(r => r.addEventListener('change', toggleFields));
+    toggleFields(); // run on page load to match sticky form state
+  </script>
+
+</body>
+</html>
