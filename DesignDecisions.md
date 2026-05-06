@@ -55,3 +55,7 @@ In the shopping cart, the consumer can update the cart (e.g., remove items or ch
 The shopping cart page must include a "Purchase" button. When clicked, it should clear the cart and remove the purchased products from the system. AJAX must be used for this functionality.
 
 "Remove the purchased products from the system" is interpreted as: decrement the product's stock by the purchased quantity. The product row is only deleted when stock hits 0.
+
+## Database
+
+Mysql8 and phpmyadmin will be used in this project. To configure database tables easily, check localhost:3306 which is the database port.

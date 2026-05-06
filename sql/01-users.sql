@@ -60,7 +60,9 @@ CREATE TABLE `consumer_user` (
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_consumer_email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_turkish_ci; --we ain't using myisam cuz we will make it relational.
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_turkish_ci; -- we ain't using myisam cuz we will make it relational.
+
+
 
 COMMIT;
 
