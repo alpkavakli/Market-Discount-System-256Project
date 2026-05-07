@@ -35,10 +35,10 @@ app.use("/signup", redirectIfAuthed, signupRoute);
 // app.use("/shoppingcart", requireAuth, shoppingcartRoute); // commented out
 
 //bunları diğer routelar için de yazacağız işte
-app.use("/signup", signupRoute);
-app.use("/shoppingcart", shoppingcartRoute);
-app.use("/products", productsRoute);
-app.use("/settings", settingsRoute);
+app.use("/shoppingcart", requireAuth, shoppingcartRoute);
+app.use("/products",     requireAuth, productsRoute);
+app.use("/settings",     requireAuth, settingsRoute);
+
 
 app.listen(port, () => {
     console.log("Server started on " + port);
