@@ -9,7 +9,9 @@ router.get("/", (req, res) => {
 })
 
 router.post("/logout", (req, res) => {
-   req.session.destroy(() => res.redirect("/login"));
-
- })
+    req.session.destroy(() => {
+        res.clearCookie("connect.sid"); // clears the session cookie from browser
+        res.redirect("/login");
+    });
+})
 export default router;
