@@ -1,0 +1,185 @@
+<!-- add_product.ejs — used for both Add and Edit product (market users only) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof editing !== 'undefined' && editing ? 'Edit Product' : 'Add Product' %> – Discount Marketplace</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 520px;
+            margin: 40px auto;
+            padding: 0 16px;
+        }
+        h1 { margin-bottom: 4px; }
+        .breadcrumb { margin-bottom: 24px; font-size: 0.9rem; }
+        .breadcrumb a { color: #0077cc; text-decoration: none; }
+
+        fieldset { padding: 24px; border: 1px solid #ccc; border-radius: 6px; }
+        legend { font-weight: bold; font-size: 1.1rem; padding: 0 8px; }
+
+        label { display: block; margin-bottom: 4px; font-size: 0.9rem; font-weight: 600; }
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        input[type="file"] {
+            width: 100%;
+            padding: 8px 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+        }
+        input[type="file"] { padding: 4px; }
+
+        .price-row {
+            display: flex;
+            gap: 12px;
+        }
+        .price-row > div { flex: 1; }
+
+        .current-image { margin-bottom: 16px; }
+        .current-image img {
+            max-width: 160px;
+            max-height: 120px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            object-fit: cover;
+        }
+        .current-image p { font-size: 0.82rem; color: #555; margin: 4px 0 0; }
+
+        .error { color: red; margin-bottom: 16px; font-size: 0.9rem; }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background: #0077cc;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        button[type="submit"]:hover { background: #005fa3; }
+    </style>
+</head>
+<body>
+
+    <h1><%= typeof editing !== 'undefined' && editing ? 'Edit Product' : 'Add Product' %></h1>
+    <div class="breadcrumb">
+        <a href="/products/market">← Back to my products</a>
+    </div>
+
+    <% if (errorMessage) { %>
+        <p class="error"><%= errorMessage %></p>
+    <% } %>
+
+    <%
+        const isEdit   = typeof editing !== 'undefined' && editing
+        const actionUrl = isEdit ? `/products/edit/${form.id}` : '/products/add'
+    %>
+
+    <form action="<%= actionUrl %>" method="POST" enctype="multipart/form-data">
+        <fieldset>
+            <legend><%= isEdit ? 'Edit product details' : 'New product details' %></legend>
+
+            <label for="title">Product title</label>
+            <input
+                type="text"
+                id="title"
+                name="title"
+                value="<%= form.title || '' %>"
+                placeholder="e.g. Toblerone 100gr"
+                required
+            >
+
+            <label for="stock">Stock (pieces)</label>
+            <input
+                type="number"
+                id="stock"
+                name="stock"
+                min="1"
+                value="<%= form.stock || '' %>"
+                placeholder="e.g. 25"
+                required
+            >
+
+            <div class="price-row">
+                <div>
+                    <label for="normal_price">Normal price (TL)</label>
+                    <input
+                        type="number"
+                        id="normal_price"
+                        name="normal_price"
+                        min="0.01"
+                        step="0.01"
+                        value="<%= form.normal_price || '' %>"
+                        placeholder="200.00"
+                        required
+                    >
+                </div>
+                <div>
+                    <label for="discounted_price">Discounted price (TL)</label>
+                    <input
+                        type="number"
+                        id="discounted_price"
+                        name="discounted_price"
+                        min="0.01"
+                        step="0.01"
+                        value="<%= form.discounted_price || '' %>"
+                        placeholder="120.00"
+                        required
+                    >
+                </div>
+            </div>
+
+            <label for="expiration_date">Expiration date</label>
+            <input
+                type="date"
+                id="expiration_date"
+                name="expiration_date"
+                value="<%= form.expiration_date || '' %>"
+                required
+            >
+
+            <!-- If editing, show current image so the user knows what's there -->
+            <% if (isEdit && form.image_path) { %>
+                <div class="current-image">
+                    <label>Current image</label>
+                    <img src="/<%= form.image_path %>" alt="Current product image">
+                    <p>Upload a new image below to replace it, or leave blank to keep the current one.</p>
+                </div>
+            <% } %>
+
+            <label for="image"><%= isEdit ? 'New image (optional)' : 'Product image' %></label>
+            <input
+                type="file"
+                id="image"
+                name="image"
+                accept="image/*"
+                <%= isEdit ? '' : 'required' %>
+            >
+
+            <button type="submit">
+                <%= isEdit ? 'Save changes' : 'Add product' %>
+            </button>
+        </fieldset>
+    </form>
+
+    <script>
+        // Client-side price validation: discounted must be less than normal
+        document.querySelector('form').addEventListener('submit', function (e) {
+            const normal     = parseFloat(document.getElementById('normal_price').value)
+            const discounted = parseFloat(document.getElementById('discounted_price').value)
+            if (!isNaN(normal) && !isNaN(discounted) && discounted >= normal) {
+                e.preventDefault()
+                alert('Discounted price must be less than the normal price.')
+                document.getElementById('discounted_price').focus()
+            }
+        })
+    </script>
+
+</body>
+</html>
