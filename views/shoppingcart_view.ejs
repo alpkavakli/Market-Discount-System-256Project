@@ -1,10 +1,8 @@
-<!-- //Only for consumer user
-/*
-(5Pts) A consumer can add products to a shopping cart. The shopping cart must be stored in the database and persist between user sessions.
-(10Pts) In the shopping cart, the consumer can update the cart (e.g., remove items or change quantities), and the system should display the grand total. AJAX must be used for this functionality.
-(5Pts) The shopping cart page must include a "Purchase" button. When clicked, it should clear the cart and remove the purchased products from the system. AJAX must be used for this functionality.
-
-*/ -->
+<!-- Only for consumer users
+(5Pts)  A consumer can add products to a shopping cart. Stored in DB, persists between sessions.
+(10Pts) Consumer can update cart (remove items or change quantities), grand total shown. AJAX required.
+(5Pts)  Purchase button clears cart and removes purchased products from system. AJAX required.
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,64 +14,73 @@
 
   <h1>Shopping Cart</h1>
 
-  <% if (typeof cartItems !== 'undefined' && cartItems.length > 0) { %>
+  <!-- Cart table — hidden via JS if it becomes empty after removals -->
+  <div id="cart-container">
+    <% if (typeof cartItems !== 'undefined' && cartItems.length > 0) { %>
 
-    <table border="1" cellpadding="8" cellspacing="0">
-      <thead>
-        <tr>
-          <th>Product</th>
-          <th>Market</th>
-          <th>Unit Price</th>
-          <th>Quantity</th>
-          <th>Subtotal</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="cart-body">
-        <% cartItems.forEach(item => { %>
-          <tr id="cart-row-<%= item.id %>">
-            <td><%= item.title %></td>
-            <td><%= item.market_name %></td>
-            <td><%= item.discounted_price.toFixed(2) %> TL</td>
-            <td>
-              <input
-                type="number"
-                min="1"
-                max="<%= item.stock %>"
-                value="<%= item.quantity %>"
-                data-cart-item-id="<%= item.id %>"
-                class="qty-input"
-              />
-            </td>
-            <td id="subtotal-<%= item.id %>">
-              <%= (item.discounted_price * item.quantity).toFixed(2) %> TL
-            </td>
-            <td>
-              <button class="btn-remove" data-cart-item-id="<%= item.id %>">Remove</button>
-            </td>
+      <table border="1" cellpadding="8" cellspacing="0">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Market</th>
+            <th>Unit Price</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+            <th>Actions</th>
           </tr>
-        <% }) %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody id="cart-body">
+          <% cartItems.forEach(item => { %>
+            <tr id="cart-row-<%= item.id %>">
+              <td><%= item.title %></td>
+              <td><%= item.market_name %></td>
+              <td><%= Number(item.discounted_price).toFixed(2) %> TL</td>
+              <td>
+                <input
+                  type="number"
+                  min="1"
+                  max="<%= item.stock %>"
+                  value="<%= item.quantity %>"
+                  data-cart-item-id="<%= item.id %>"
+                  data-original-value="<%= item.quantity %>"
+                  class="qty-input"
+                />
+              </td>
+              <td id="subtotal-<%= item.id %>">
+                <%= (Number(item.discounted_price) * item.quantity).toFixed(2) %> TL
+              </td>
+              <td>
+                <button class="btn-remove" data-cart-item-id="<%= item.id %>">Remove</button>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
 
-    <p><strong>Grand Total: <span id="grand-total">
-      <%=
-        cartItems.reduce((sum, item) => sum + item.discounted_price * item.quantity, 0).toFixed(2)
-      %> TL
-    </span></strong></p>
+      <p><strong>Grand Total: <span id="grand-total">
+        <%= cartItems.reduce((sum, item) => sum + Number(item.discounted_price) * item.quantity, 0).toFixed(2) %> TL
+      </span></strong></p>
 
-    <button id="btn-purchase">Purchase</button>
+      <button id="btn-purchase">Purchase</button>
 
-  <% } else { %>
-    <p>Your cart is empty. <a href="/products">Browse products</a></p>
-  <% } %>
+    <% } else { %>
+      <!-- Empty cart message — also shown dynamically via JS when last item is removed -->
+      <p id="empty-msg">Your cart is empty. <a href="/products">Browse products</a></p>
+    <% } %>
+  </div>
 
   <script>
-    // --- Update quantity via AJAX ---
+    // ── Update quantity via AJAX ──────────────────────────────────────────────
     document.querySelectorAll('.qty-input').forEach(input => {
       input.addEventListener('change', async function () {
         const cartItemId = this.dataset.cartItemId;
         const newQty = parseInt(this.value);
+
+        // Basic client-side validation before sending
+        if (isNaN(newQty) || newQty < 1) {
+          this.value = this.dataset.originalValue;
+          return;
+        }
 
         const res = await fetch('/shoppingcart/update', {
           method: 'POST',
@@ -87,14 +94,16 @@
             data.subtotal.toFixed(2) + ' TL';
           document.getElementById('grand-total').textContent =
             data.grandTotal.toFixed(2) + ' TL';
+          // Update original value so reverting works correctly next time
+          this.dataset.originalValue = newQty;
         } else {
           alert(data.message || 'Failed to update quantity.');
-          this.value = this.defaultValue; // revert
+          this.value = this.dataset.originalValue; // revert to last known good value
         }
       });
     });
 
-    // --- Remove item via AJAX ---
+    // ── Remove item via AJAX ──────────────────────────────────────────────────
     document.querySelectorAll('.btn-remove').forEach(btn => {
       btn.addEventListener('click', async function () {
         const cartItemId = this.dataset.cartItemId;
@@ -107,16 +116,24 @@
 
         const data = await res.json();
         if (data.success) {
+          // Remove the row from the table
           document.getElementById(`cart-row-${cartItemId}`).remove();
-          document.getElementById('grand-total').textContent =
-            data.grandTotal.toFixed(2) + ' TL';
+
+          const remaining = document.querySelectorAll('#cart-body tr');
+          if (remaining.length === 0) {
+            // Cart is now empty — hide table and show empty message
+            showEmptyCart();
+          } else {
+            document.getElementById('grand-total').textContent =
+              data.grandTotal.toFixed(2) + ' TL';
+          }
         } else {
           alert(data.message || 'Failed to remove item.');
         }
       });
     });
 
-    // --- Purchase via AJAX ---
+    // ── Purchase via AJAX ─────────────────────────────────────────────────────
     const purchaseBtn = document.getElementById('btn-purchase');
     if (purchaseBtn) {
       purchaseBtn.addEventListener('click', async function () {
@@ -130,11 +147,17 @@
         const data = await res.json();
         if (data.success) {
           alert('Purchase successful!');
-          window.location.reload();
+          showEmptyCart(); // clear UI without reloading
         } else {
           alert(data.message || 'Purchase failed.');
         }
       });
+    }
+
+    // ── Helper: swap table for empty message ──────────────────────────────────
+    function showEmptyCart() {
+      document.getElementById('cart-container').innerHTML =
+        '<p id="empty-msg">Your cart is empty. <a href="/products">Browse products</a></p>';
     }
   </script>
 
