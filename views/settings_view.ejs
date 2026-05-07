@@ -1,1 +1,84 @@
-//To update/edit own info, applicable for both users.
+<!-- Settings page — both user types. Logout + delete + profile edit live here. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+</head>
+<body>
+    <h1>Settings</h1>
+
+    <p>You are logged in as a <strong><%= role %></strong>.</p>
+    <p><a href="/products">Back to products</a></p>
+
+    <% if (errorMessage) { %>
+        <p style="color:red;"><%= errorMessage %></p>
+    <% } %>
+
+    <% if (successMessage) { %>
+        <p style="color:green;"><%= successMessage %></p>
+    <% } %>
+
+    <form action="/settings" method="POST">
+        <fieldset>
+            <legend>Edit profile</legend>
+
+            <label for="name"><%= role === "market" ? "Market name" : "Full name" %>:</label>
+            <input type="text" id="name" name="name" value="<%= form.name %>" required>
+            <br><br>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" value="<%= form.email %>" required>
+            <br><br>
+
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city" value="<%= form.city %>" required>
+            <br><br>
+
+            <label for="district">District:</label>
+            <input type="text" id="district" name="district" value="<%= form.district %>" required>
+            <br><br>
+
+            <label for="newPassword">New password (leave blank to keep current):</label>
+            <input type="password" id="newPassword" name="newPassword" minlength="4">
+            <br><br>
+
+            <label for="confirmNewPassword">Confirm new password:</label>
+            <input type="password" id="confirmNewPassword" name="confirmNewPassword" minlength="4">
+            <br><br>
+
+            <label for="currentPassword">Current password (required to save):</label>
+            <input type="password" id="currentPassword" name="currentPassword" required>
+            <br><br>
+
+            <button type="submit">Save changes</button>
+        </fieldset>
+    </form>
+
+    <hr>
+
+    <form action="/settings/delete" method="POST"
+          onsubmit="return confirm('Permanently delete your account? This cannot be undone.');">
+        <fieldset>
+            <legend>Danger zone</legend>
+            <p style="color:red;">
+                <strong>Warning:</strong> This permanently deletes your account<% if (role === "market") { %>
+                and all your products<% } %>.
+            </p>
+
+            <label for="deletePassword">Enter your current password to confirm:</label>
+            <input type="password" id="deletePassword" name="deletePassword" required>
+            <br><br>
+
+            <button type="submit">Delete account permanently</button>
+        </fieldset>
+    </form>
+
+    <hr>
+
+    <form action="/settings/logout" method="POST">
+        <button type="submit">Logout</button>
+    </form>
+</body>
+</html>
