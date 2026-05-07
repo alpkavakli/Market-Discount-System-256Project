@@ -33,3 +33,10 @@ alya: /shoppingcart (ejs + route)
 zeynep: /products page(ejs + route)
 
 alp: sql, docker, .md's, /login n /signup 
+
+
+
+
+## additional external modules
+
+I'm using express mysql session to save the sessions to the database. Normal exrpess session wouldn't be sufficient as everytime we shut down the project all the data would be gone.

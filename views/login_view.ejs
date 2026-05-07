@@ -1,2 +1,46 @@
-//When a market user logs in, all expired products in the list should be clearly marked, so that the user is aware of products that have passed their expiration date.
+<!--When a market user logs in, all expired products in the list should be clearly marked, so that the user is aware of products that have passed their expiration date.  -->
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        fieldset { width: max-content; margin: 30px auto; padding: 20px; }
+        p { color: red; text-align: center; }
+    </style>
+</head>
+<body>
+    <p>
+        <a href="/signup">Sign up</a>
+    </p>
+    <% if (errorMessage) { %>
+        <p style="color:red;"><%= errorMessage %></p>
+    <% } %>
+    <form action="/login" method="POST">
+        <fieldset>
+            <legend>Login</legend>
+             <label for="role">I am a:</label>
+            <select id="role" name="role" required>
+                <option value="consumer">Customer</option>
+                <option value="market">Market</option>
+            </select>
+            <br><br> <!-- Checking the user type -->
+            <!-- create a username and password one under another with some space   -->  
+             <!-- ali@gmail.com 1234 -->
+            <label for="email">Email:</label>
+            <input type="text" id="email" name="email" required>
+            <br><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <br><br>
+            <label for="remember">Remember me:</label>
+            <input type="checkbox" id="remember" name="remember">
+            <br><br>
+            <button type="submit">Login</button>
+        </fieldset>
+    </form>
+
+</body>
+</html>
