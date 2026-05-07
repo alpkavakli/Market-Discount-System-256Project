@@ -5,3 +5,138 @@
 (5Pts) The shopping cart page must include a "Purchase" button. When clicked, it should clear the cart and remove the purchased products from the system. AJAX must be used for this functionality.
 
 */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shopping Cart – Discount Marketplace</title>
+</head>
+<body>
+
+  <h1>Shopping Cart</h1>
+
+  <% if (typeof cartItems !== 'undefined' && cartItems.length > 0) { %>
+
+    <table border="1" cellpadding="8" cellspacing="0">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Market</th>
+          <th>Unit Price</th>
+          <th>Quantity</th>
+          <th>Subtotal</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="cart-body">
+        <% cartItems.forEach(item => { %>
+          <tr id="cart-row-<%= item.id %>">
+            <td><%= item.title %></td>
+            <td><%= item.market_name %></td>
+            <td><%= item.discounted_price.toFixed(2) %> TL</td>
+            <td>
+              <input
+                type="number"
+                min="1"
+                max="<%= item.stock %>"
+                value="<%= item.quantity %>"
+                data-cart-item-id="<%= item.id %>"
+                class="qty-input"
+              />
+            </td>
+            <td id="subtotal-<%= item.id %>">
+              <%= (item.discounted_price * item.quantity).toFixed(2) %> TL
+            </td>
+            <td>
+              <button class="btn-remove" data-cart-item-id="<%= item.id %>">Remove</button>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+    <p><strong>Grand Total: <span id="grand-total">
+      <%=
+        cartItems.reduce((sum, item) => sum + item.discounted_price * item.quantity, 0).toFixed(2)
+      %> TL
+    </span></strong></p>
+
+    <button id="btn-purchase">Purchase</button>
+
+  <% } else { %>
+    <p>Your cart is empty. <a href="/products">Browse products</a></p>
+  <% } %>
+
+  <script>
+    // --- Update quantity via AJAX ---
+    document.querySelectorAll('.qty-input').forEach(input => {
+      input.addEventListener('change', async function () {
+        const cartItemId = this.dataset.cartItemId;
+        const newQty = parseInt(this.value);
+
+        const res = await fetch('/shoppingcart/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cartItemId, quantity: newQty })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById(`subtotal-${cartItemId}`).textContent =
+            data.subtotal.toFixed(2) + ' TL';
+          document.getElementById('grand-total').textContent =
+            data.grandTotal.toFixed(2) + ' TL';
+        } else {
+          alert(data.message || 'Failed to update quantity.');
+          this.value = this.defaultValue; // revert
+        }
+      });
+    });
+
+    // --- Remove item via AJAX ---
+    document.querySelectorAll('.btn-remove').forEach(btn => {
+      btn.addEventListener('click', async function () {
+        const cartItemId = this.dataset.cartItemId;
+
+        const res = await fetch('/shoppingcart/remove', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cartItemId })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById(`cart-row-${cartItemId}`).remove();
+          document.getElementById('grand-total').textContent =
+            data.grandTotal.toFixed(2) + ' TL';
+        } else {
+          alert(data.message || 'Failed to remove item.');
+        }
+      });
+    });
+
+    // --- Purchase via AJAX ---
+    const purchaseBtn = document.getElementById('btn-purchase');
+    if (purchaseBtn) {
+      purchaseBtn.addEventListener('click', async function () {
+        if (!confirm('Confirm purchase?')) return;
+
+        const res = await fetch('/shoppingcart/purchase', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          alert('Purchase successful!');
+          window.location.reload();
+        } else {
+          alert(data.message || 'Purchase failed.');
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>

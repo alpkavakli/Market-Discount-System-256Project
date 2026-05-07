@@ -1,6 +1,9 @@
 import express from "express";
 import loginRoute from "./routes/login_route.js"
-import signupRoute from "./routes/signup_route.js"
+import signupRoute from "./routes/signup_route.js";
+import shoppingcartRoute from "./routes/shoppingcart_route.js";
+import productsRoute from "./routes/products_route.js";
+import settingsRoute from "./routes/settings_route.js";
 import { pool } from "./dbpool.js";
 import "dotenv/config";
 //import bcrypt from "bcrypt"; //for login, hash -/ moved to signup and login
@@ -32,6 +35,10 @@ app.use("/signup", redirectIfAuthed, signupRoute);
 // app.use("/shoppingcart", requireAuth, shoppingcartRoute); // commented out
 
 //bunları diğer routelar için de yazacağız işte
+app.use("/signup", signupRoute);
+app.use("/shoppingcart", shoppingcartRoute);
+app.use("/products", productsRoute);
+app.use("/settings", settingsRoute);
 
 app.listen(port, () => {
     console.log("Server started on " + port);
