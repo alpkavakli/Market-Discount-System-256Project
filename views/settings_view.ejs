@@ -5,8 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Settings</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
+<body class="settings-page">
+    <div class="page-wrapper">
     <h1>Settings</h1>
 
     <p>You are logged in as a <strong><%= role %></strong>.</p>
@@ -80,5 +82,7 @@
     <form action="/settings/logout" method="POST">
         <button type="submit">Logout</button>
     </form>
+    </div>
+    <img src="/images/marketlogo2.jpeg" alt="EcoMeow" class="site-logo">
 </body>
 </html>

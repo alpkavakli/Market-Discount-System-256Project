@@ -17,51 +17,58 @@
             text-align: center;
         }
     </style>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
-    <p><a href="/login">Already have an account? Login</a></p>
 
-    <% if (errorMessage) { %>
-        <p style="color:red;">
-            <%= errorMessage %>
-        </p>
-        <% } %>
+  <div class="auth-page">
 
-            <form action="/signup" method="POST">
-                <fieldset>
-                    <legend>Sign up</legend>
+    <div class="auth-brand">EcoMeow</div>
 
-                    <label for="role">I am a:</label>
-                    <select id="role" name="role" required>
-                        <option value="consumer" <%=form.role==="consumer" ? "selected" : "" %>>Customer</option>
-                        <option value="market" <%=form.role==="market" ? "selected" : "" %>>Market</option>
-                    </select>
-                    <br><br>
+    <div class="auth-card">
+      <h1>Sign up</h1>
 
-                    <label for="name">Name:</label>
-                    <input type="text" id="name" name="name" value="<%= form.name %>" required>
-                    <br><br>
+      <% if (errorMessage) { %>
+        <p class="msg-error"><%= errorMessage %></p>
+      <% } %>
 
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" value="<%= form.email %>" required>
-                    <br><br>
+      <form action="/signup" method="POST">
 
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" minlength="4" required>
-                    <br><br>
+        <label for="role">I am a:</label>
+        <select id="role" name="role" required>
+          <option value="consumer" <%= form.role === "consumer" ? "selected" : "" %>>Customer</option>
+          <option value="market"   <%= form.role === "market"   ? "selected" : "" %>>Market</option>
+        </select>
 
-                    <label for="city">City:</label>
-                    <input type="text" id="city" name="city" value="<%= form.city %>" required>
-                    <br><br>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" value="<%= form.name %>" required>
 
-                    <label for="district">District:</label>
-                    <input type="text" id="district" name="district" value="<%= form.district %>" required>
-                    <br><br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" value="<%= form.email %>" required>
 
-                    <button type="submit">Sign up</button>
-                </fieldset>
-            </form>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" minlength="4" required>
+
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city" value="<%= form.city %>" required>
+
+        <label for="district">District:</label>
+        <input type="text" id="district" name="district" value="<%= form.district %>" required>
+
+        <button type="submit">Sign up</button>
+
+      </form>
+    </div>
+
+    <div class="auth-below-link">
+      Already have an account? <a href="/login">Login</a>
+    </div>
+
+  </div>
+<img src="/images/marketlogo2.jpeg" alt="EcoMeow" class="site-logo">
 </body>
+
+
 
 </html>

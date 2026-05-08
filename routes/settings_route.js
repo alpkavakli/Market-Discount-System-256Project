@@ -33,7 +33,7 @@ router.get("/", async (req, res) => {
     }
 });
 
-// POST /settings — update profile (requires current password)
+// POST /settings 
 router.post("/", async (req, res) => {
     const { userId, role } = req.session;
     const { email, name, city, district, currentPassword, newPassword, confirmNewPassword } = req.body;
@@ -104,7 +104,7 @@ router.post("/", async (req, res) => {
     }
 });
 
-// POST /settings/delete — permanently delete account
+// POST /settings/delete
 router.post("/delete", async (req, res) => {
     const { userId, role } = req.session;
     const { deletePassword } = req.body;

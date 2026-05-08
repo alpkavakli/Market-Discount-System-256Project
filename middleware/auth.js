@@ -15,4 +15,3 @@ export function redirectIfAuthed(req, res, next) {
     next();
 }
 
-//İşte logluyla productsa gönderiyo değilse logine gönderiyo bir de verify'ı da ekledim

@@ -33,7 +33,7 @@ export const sessionMiddleware = session({ //we are wrapping it as a middleware 
     },
 });
 
-//bunu exportlamak gerekmiyo mu akkk
+
 
 /* flow: User logs in → your handler does req.session.userId = 5.
 express-session notices the change, calls store.set(...) → row written to sessions table with data = '{"userId":5}'.

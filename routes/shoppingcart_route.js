@@ -11,7 +11,6 @@ import { pool } from "../dbpool.js"
 const router = express.Router()
 router.use(express.json()) // needed for AJAX requests
 
-// ── Middleware: only consumers can access the cart ──────────────────────────
 function requireConsumer(req, res, next) {
     if (!req.session.userId || req.session.role !== "consumer") {
         return res.redirect("/login")
@@ -19,12 +18,14 @@ function requireConsumer(req, res, next) {
     next()
 }
 
-// ── Helper: calculate grand total from cart rows ─────────────────────────────
 function calcGrandTotal(cartItems) {
-    return cartItems.reduce((sum, item) => sum + item.discounted_price * item.quantity, 0)
+     let total = 0;
+    for (let item of cartItems) {
+        total += item.discounted_price * item.quantity;
+    }
+    return total;
 }
 
-// ── GET /shoppingcart ────────────────────────────────────────────────────────
 // Show the cart page with all items for the logged-in consumer
 router.get("/", requireConsumer, async (req, res) => {
     try {
@@ -52,7 +53,6 @@ router.get("/", requireConsumer, async (req, res) => {
     }
 })
 
-// ── POST /shoppingcart/add ───────────────────────────────────────────────────
 // Add a product to the cart (called from the products page)
 // If it's already in the cart, increase quantity by 1
 router.post("/add", requireConsumer, async (req, res) => {
@@ -85,7 +85,7 @@ router.post("/add", requireConsumer, async (req, res) => {
             return res.json({ success: false, message: "Not enough stock.", outOfStock: true })
         }//added in order to block if already is at stock limit
  
-        // Insert or increment quantity (UNIQUE KEY on consumer_id + product_id handles duplicates)
+        // Insert or increment quantity
         await pool.query(
             `INSERT INTO cart_item (consumer_id, product_id, quantity)
              VALUES (?, ?, 1)
@@ -101,7 +101,6 @@ router.post("/add", requireConsumer, async (req, res) => {
     }
 })
 
-// ── POST /shoppingcart/update ────────────────────────────────────────────────
 // Update quantity of a cart item (AJAX)
 router.post("/update", requireConsumer, async (req, res) => {
     const { cartItemId, quantity } = req.body
@@ -154,7 +153,7 @@ router.post("/update", requireConsumer, async (req, res) => {
     }
 })
 
-// ── POST /shoppingcart/remove ────────────────────────────────────────────────
+
 // Remove a single item from the cart (AJAX)
 router.post("/remove", requireConsumer, async (req, res) => {
     const { cartItemId } = req.body
@@ -194,7 +193,7 @@ router.post("/remove", requireConsumer, async (req, res) => {
     }
 })
 
-// ── POST /shoppingcart/purchase ──────────────────────────────────────────────
+
 // Complete the purchase: deduct stock from products, clear the cart (AJAX)
 router.post("/purchase", requireConsumer, async (req, res) => {
     const conn = await pool.getConnection() // use a connection for transaction

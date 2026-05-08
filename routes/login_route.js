@@ -11,13 +11,13 @@ router.get("/", (req, res) => {
     errorMessage: null,
     form: { email: "", role: "consumer", remember: false },
   });
-  //hata göndermek için
+
 });
 
 router.post("/", async (req, res) => {
   const { email, password, role } = req.body;
   const form = { email, role, remember: !!req.body.remember };
-  //req parser gerekebilir.
+
   // db querysi, password checki, password hashing, starting a session must be done
   if (!email || !password || (role !== "consumer" && role !== "market")) {
     return res.status(400).render("login_view", {
@@ -39,7 +39,7 @@ router.post("/", async (req, res) => {
       });
     }
 
-    const user = rows[0]; //password kontrolü işte hashlenmişti ya signuptayken o yüzden gene hashlayip aynı olup olmadığına bakıyoz
+    const user = rows[0]; 
     const passwordMatches = await bcrypt.compare(password, user.password_hash);
 
     if (!passwordMatches) {

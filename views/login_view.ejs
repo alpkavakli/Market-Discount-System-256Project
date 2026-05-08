@@ -19,44 +19,52 @@
             text-align: center;
         }
     </style>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
-    <p>
-        <a href="/signup">Sign up</a>
-    </p>
-    <% if (errorMessage) { %>
-        <p style="color:red;">
-            <%= errorMessage %>
-        </p>
-        <% } %>
-            <form action="/login" method="POST">
-                <fieldset>
-                    <legend>Login</legend>
-                    <label for="role">I am a:</label>
-                    <select id="role" name="role" required>
-                        <option value="consumer" <%=form.role==="consumer" ? "selected" : "" %>>Customer</option>
-                        <option value="market" <%=form.role==="market" ? "selected" : "" %>>Market</option>
-                    </select>
 
-                    <br><br> <!-- Checking the user type -->
-                    <!-- create a username and password one under another with some space   -->
-                    <!-- ali@gmail.com 1234 -->
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" value="<%= form.email %>" required>
+  <div class="auth-page">
 
-                    <br><br>
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required>
-                    <br><br>
-                    <label for="remember">Remember me:</label>
-                    <input type="checkbox" id="remember" name="remember" <%=form.remember ? "checked" : "" %>>
+    <div class="auth-brand">EcoMeow</div>
 
-                    <br><br>
-                    <button type="submit">Login</button>
-                </fieldset>
-            </form>
+    <div class="auth-card">
+      <h1>Login</h1>
 
+      <% if (errorMessage) { %>
+        <p class="msg-error"><%= errorMessage %></p>
+      <% } %>
+
+      <form action="/login" method="POST">
+
+        <label for="role">I am a:</label>
+        <select id="role" name="role" required>
+          <option value="consumer" <%= form.role === "consumer" ? "selected" : "" %>>Customer</option>
+          <option value="market"   <%= form.role === "market"   ? "selected" : "" %>>Market</option>
+        </select>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" value="<%= form.email %>" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+
+        <div class="remember-row">
+          <input type="checkbox" id="remember" name="remember" <%= form.remember ? "checked" : "" %>>
+          <label for="remember" style="margin:0; font-weight:400;">Remember me</label>
+        </div>
+
+        <button type="submit">Login</button>
+
+      </form>
+    </div>
+
+    <div class="auth-below-link">
+      Don't have an account? <a href="/signup">Sign up</a>
+    </div>
+
+  </div>
+<img src="/images/marketlogo2.jpeg" alt="EcoMeow" class="site-logo">
 </body>
 
 </html>

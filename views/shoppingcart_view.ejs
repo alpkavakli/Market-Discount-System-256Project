@@ -9,13 +9,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Shopping Cart – Discount Marketplace</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
-
+<body class="cart-page">
+    <div class="page-wrapper">
   <h1>Shopping Cart</h1>
-  <p><a href="/products">Browse products</a></p> <!-- added to browse products  -->
+  <p><a href="/products" class="cart-back-link">Browse products</a></p> <!-- added to browse products  -->
 
-  <!-- Cart table — hidden via JS if it becomes empty after removals -->
+ 
   <div id="cart-container">
     <% if (typeof cartItems !== 'undefined' && cartItems.length > 0) { %>
 
@@ -63,21 +64,19 @@
           <% }) %>
         </tbody>
       </table>
-
-      <p><strong>Grand Total: <span id="grand-total">
+<div class="cart-total-row">
+      <p class="cart-total-label">Grand Total: <span id="grand-total">
         <%= cartItems.reduce((sum, item) => sum + Number(item.discounted_price) * item.quantity, 0).toFixed(2) %> TL
-      </span></strong></p>
+      </span></p>
 
-      <button id="btn-purchase">Purchase</button>
-
+      <button id="btn-purchase" class="btn-purchase">Purchase</button>
+</div>
     <% } else { %>
-      <!-- Empty cart message — also shown dynamically via JS when last item is removed -->
       <p id="empty-msg">Your cart is empty. <a href="/products">Browse products</a></p>
     <% } %>
   </div>
 
   <script>
-    // ── Update quantity via AJAX ──────────────────────────────────────────────
     document.querySelectorAll('.qty-input').forEach(input => {
       input.addEventListener('change', async function () {
         const cartItemId = this.dataset.cartItemId;
@@ -119,7 +118,6 @@
       });
     });
 
-    // ── Remove item via AJAX ──────────────────────────────────────────────────
     document.querySelectorAll('.btn-remove').forEach(btn => {
       btn.addEventListener('click', async function () {
         const cartItemId = this.dataset.cartItemId;
@@ -149,7 +147,6 @@
       });
     });
 
-    // ── Purchase via AJAX ─────────────────────────────────────────────────────
     const purchaseBtn = document.getElementById('btn-purchase');
     if (purchaseBtn) {
       purchaseBtn.addEventListener('click', async function () {
@@ -170,12 +167,13 @@
       });
     }
 
-    // ── Helper: swap table for empty message ──────────────────────────────────
+
     function showEmptyCart() {
       document.getElementById('cart-container').innerHTML =
         '<p id="empty-msg">Your cart is empty. <a href="/products">Browse products</a></p>';
     }
   </script>
-
+</div>
+<img src="/images/marketlogo2.jpeg" alt="EcoMeow" class="site-logo">
 </body>
 </html>
