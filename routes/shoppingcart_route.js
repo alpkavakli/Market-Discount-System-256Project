@@ -64,15 +64,27 @@ router.post("/add", requireConsumer, async (req, res) => {
 
     try {
         // Check if product exists and is not expired
-        const [product] = await pool.query(
+        const [productRows] = await pool.query(
             `SELECT id, stock FROM product WHERE id = ? AND expiration_date >= CURDATE()`,
             [productId]
         )
 
-        if (product.length === 0) {
+        if (productRows.length === 0) {
             return res.json({ success: false, message: "Product not found or expired." })
         }
+        const stock = productRows[0].stock
+        // Check how many are already in the cart
+        const [cartRows] = await pool.query(
+            `SELECT quantity FROM cart_item WHERE consumer_id = ? AND product_id = ?`,
+            [req.session.userId, productId]
+        )
 
+        const currentQty = cartRows.length > 0 ? cartRows[0].quantity : 0
+
+        if (currentQty >= stock) {
+            return res.json({ success: false, message: "Not enough stock.", outOfStock: true })
+        }//added in order to block if already is at stock limit
+ 
         // Insert or increment quantity (UNIQUE KEY on consumer_id + product_id handles duplicates)
         await pool.query(
             `INSERT INTO cart_item (consumer_id, product_id, quantity)
@@ -80,8 +92,9 @@ router.post("/add", requireConsumer, async (req, res) => {
              ON DUPLICATE KEY UPDATE quantity = quantity + 1`,
             [req.session.userId, productId]
         )
-
-        res.json({ success: true })
+        //added to tell the frontend if we just hit the stock limit after this add
+       const newQty = currentQty + 1
+        res.json({ success: true, outOfStock: newQty >= stock })
     } catch (err) {
         console.error("Cart ADD error:", err)
         res.json({ success: false, message: "Something went wrong." })

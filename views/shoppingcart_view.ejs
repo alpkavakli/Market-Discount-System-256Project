@@ -13,6 +13,7 @@
 <body>
 
   <h1>Shopping Cart</h1>
+  <p><a href="/products">Browse products</a></p> <!-- added to browse products  -->
 
   <!-- Cart table — hidden via JS if it becomes empty after removals -->
   <div id="cart-container">
@@ -45,6 +46,12 @@
                   data-original-value="<%= item.quantity %>"
                   class="qty-input"
                 />
+               <span
+                        id="stock-warning-<%= item.id %>"
+                        style="color:red; font-size:0.8rem;"
+                        <% if (item.quantity < item.stock) { %>hidden<% } %>
+                        >Out of stock
+                </span>
               </td>
               <td id="subtotal-<%= item.id %>">
                 <%= (Number(item.discounted_price) * item.quantity).toFixed(2) %> TL
@@ -81,6 +88,10 @@
           this.value = this.dataset.originalValue;
           return;
         }
+          if (newQty > maxStock) { //added to stock limit on client-side
+          newQty = maxStock
+          this.value = maxStock
+        }
 
         const res = await fetch('/shoppingcart/update', {
           method: 'POST',
@@ -96,7 +107,12 @@
             data.grandTotal.toFixed(2) + ' TL';
           // Update original value so reverting works correctly next time
           this.dataset.originalValue = newQty;
+
+          const warning = document.getElementById(`stock-warning-${cartItemId}`) //added to toggle stock warning 
+          warning.style.display = newQty >= maxStock ? 'inline' : 'none'
+
         } else {
+            
           alert(data.message || 'Failed to update quantity.');
           this.value = this.dataset.originalValue; // revert to last known good value
         }
