@@ -7,27 +7,35 @@ router.use(express.json()); //if the content is json it parses it and adds it to
 
 router.get("/", (req, res) => {
   //It means /login, not just /, we've implemented it in main
-  res.render("login_view", { errorMessage: null }); //hata göndermemiz gerekirse
+  res.render("login_view", {
+    errorMessage: null,
+    form: { email: "", role: "consumer", remember: false },
+  });
+  //hata göndermek için
 });
 
 router.post("/", async (req, res) => {
-  const { email, password, role } = req.body; //req parser gerekebilir.
+  const { email, password, role } = req.body;
+  const form = { email, role, remember: !!req.body.remember };
+  //req parser gerekebilir.
   // db querysi, password checki, password hashing, starting a session must be done
   if (!email || !password || (role !== "consumer" && role !== "market")) {
     return res.status(400).render("login_view", {
-      errorMessage: "Please fill in all fields.", //boşluk varsa doldur dioz curlle hileye de izin vermedik
+      errorMessage: "Please fill in all fields.",
+      form,
     });
   }
   const table = role === "market" ? "market_user" : "consumer_user";
 
   try {
     const [rows] = await pool.query(
-            `SELECT id, password_hash, is_verified FROM ${table} WHERE email = ? LIMIT 1`,
+      `SELECT id, password_hash, is_verified FROM ${table} WHERE email = ? LIMIT 1`,
       [email],
     );
     if (rows.length === 0) {
       return res.status(401).render("login_view", {
         errorMessage: "Invalid email or password.",
+        form,
       });
     }
 
@@ -37,10 +45,11 @@ router.post("/", async (req, res) => {
     if (!passwordMatches) {
       return res.status(401).render("login_view", {
         errorMessage: "Invalid email or password.",
+        form,
       });
     }
 
-        req.session.userId = user.id;
+    req.session.userId = user.id;
     req.session.role = role;
     req.session.verified = !!user.is_verified;
 
@@ -52,11 +61,11 @@ router.post("/", async (req, res) => {
       return res.redirect("/verify");
     }
     res.redirect("/products");
-
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).render("login_view", {
       errorMessage: "Something went wrong. Try again.",
+      form,
     });
   }
 });
