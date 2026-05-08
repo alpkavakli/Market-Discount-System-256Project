@@ -161,7 +161,7 @@ router.get("/edit/:id", requireMarket, async (req, res) => {
 
         const product = rows[0]
         // Format date for <input type="date"> (YYYY-MM-DD)
-        product.expiration_date = product.expiration_date.toISOString().split("T")[0]
+        product.expiration_date = new Date(product.expiration_date).toLocaleDateString('en-CA')
 
         res.render("add_product", { errorMessage: null, form: product, editing: true })
     } catch (err) {

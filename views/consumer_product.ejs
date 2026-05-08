@@ -330,8 +330,15 @@
                             this.disabled = false
                         }, 1800)
                     } else {
+                        if (data.outOfStock) {
+                            this.textContent = 'Out of stock'
+                            this.classList.add('out-of-stock')
+                            this.disabled = true
+                        } else {
+                            this.disabled = false
+                        }
                         showToast(data.message || 'Could not add to cart.', 'error')
-                        this.disabled = false
+
                     }
                 } catch (err) {
                     showToast('Network error. Try again.', 'error')

@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -8,7 +9,7 @@ import productsRoute from "./routes/products_route.js";
 import settingsRoute from "./routes/settings_route.js";
 import verifyRoute from "./routes/verify_route.js";
 import { pool } from "./dbpool.js";
-import "dotenv/config";
+
 //import bcrypt from "bcrypt"; //for login, hash -/ moved to signup and login
 //import session from "express-session"; //I'm importing everything in main
 import { sessionMiddleware } from "./controllers/session.js"; //session stuff
