@@ -14,7 +14,7 @@ Email verification will be left for later. The verification fields are already i
 
 After log in, a session will be started for the users, so we don't need to check who they are anymore. After this point it will be auto assumed that we know who is logged in.
 
-The logout button will live on the `/settings` page. It hits `POST /logout` to destroy the session. The logout handler will be in its own route file.
+The logout button will live on the `/settings` page. It hits `POST /logout` to destroy the session. The logout handler will be in its own route file. Nah it wont i changed my idea.
 
 ## Routing
 

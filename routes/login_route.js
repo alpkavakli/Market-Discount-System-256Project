@@ -22,7 +22,7 @@ router.post("/", async (req, res) => {
 
   try {
     const [rows] = await pool.query(
-      `SELECT id, password_hash FROM ${table} WHERE email = ? LIMIT 1`,
+            `SELECT id, password_hash, is_verified FROM ${table} WHERE email = ? LIMIT 1`,
       [email],
     );
     if (rows.length === 0) {
@@ -40,14 +40,19 @@ router.post("/", async (req, res) => {
       });
     }
 
-    req.session.userId = user.id;
+        req.session.userId = user.id;
     req.session.role = role;
+    req.session.verified = !!user.is_verified;
 
     if (req.body.remember) {
       req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 30; // 30 days
     }
 
+    if (!req.session.verified) {
+      return res.redirect("/verify");
+    }
     res.redirect("/products");
+
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).render("login_view", {

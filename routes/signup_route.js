@@ -1,6 +1,7 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import { pool } from "../dbpool.js";
+import { generateCode, sendVerificationEmail } from "../controllers/mailer.js";
 
 const router = express.Router();
 
@@ -40,17 +41,29 @@ router.post("/", async (req, res) => {
   const nameColumn = role === "market" ? "market_name" : "full_name";
 
   try {
-    const passwordHash = await bcrypt.hash(password, 10);
+       const passwordHash = await bcrypt.hash(password, 10);
+    const code = generateCode();
 
     const [result] = await pool.query(
-      `INSERT INTO ${table} (email, ${nameColumn}, password_hash, city, district)
-             VALUES (?, ?, ?, ?, ?)`,
-      [email, name, passwordHash, city, district],
+      `INSERT INTO ${table}
+         (email, ${nameColumn}, password_hash, city, district, verification_code, verification_expires)
+       VALUES (?, ?, ?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 15 MINUTE))`,
+      [email, name, passwordHash, city, district, code],
     );
 
     req.session.userId = result.insertId;
     req.session.role = role;
-    res.redirect("/products");
+    req.session.verified = false;
+
+    try {
+      await sendVerificationEmail(email, code);
+    } catch (mailErr) {
+      console.error("Email send failed:", mailErr);
+      // user can still hit "resend" on /verify
+    }
+
+    res.redirect("/verify");
+
   } catch (err) {
     if (err.code === "ER_DUP_ENTRY") {
       return res.status(409).render("signup_view", {

@@ -4,6 +4,7 @@ import signupRoute from "./routes/signup_route.js";
 import shoppingcartRoute from "./routes/shoppingcart_route.js";
 import productsRoute from "./routes/products_route.js";
 import settingsRoute from "./routes/settings_route.js";
+import verifyRoute from "./routes/verify_route.js";
 import { pool } from "./dbpool.js";
 import "dotenv/config";
 //import bcrypt from "bcrypt"; //for login, hash -/ moved to signup and login
@@ -28,6 +29,7 @@ app.use(express.json()) //jsona fln çeviriyo işte parseluyo fln
 //main shouldn't contain endpoints usually
 app.use("/", homeRoute);
 app.use("/login", redirectIfAuthed, loginRoute);   // /login is the path yani localhost:3000/login'de çalışıyo olacak
+app.use("/verify", verifyRoute);
 app.use("/signup", redirectIfAuthed, signupRoute);     
 // app.use("/logout", requireAuth, logoutRoute);          // commented out
 // app.use("/products", requireAuth, productsRoute);     // commented out
