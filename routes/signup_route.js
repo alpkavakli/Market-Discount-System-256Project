@@ -6,10 +6,17 @@ import { generateCode, sendVerificationEmail } from "../controllers/mailer.js";
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  res.render("signup_view", {
-    errorMessage: null,
-    form: { email: "", role: "consumer", name: "", city: "", district: "" },
-  });
+    let form = { email: "", role: "consumer", name: "", city: "", district: "" };
+
+    if (req.session.signupForm) {
+        form = req.session.signupForm;
+        delete req.session.signupForm;  // consume the flash, wont survive a refresh sdc cancel yani not ctrl r
+    }
+
+    res.render("signup_view", {
+        errorMessage: null,
+        form,
+    });
 });
 
 router.post("/", async (req, res) => {

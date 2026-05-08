@@ -1,28 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Verify email</title>
 </head>
+
 <body>
     <h1>Verify your email</h1>
     <p>We sent a 6-digit code to your email. Enter it below to activate your account.</p>
 
-    <% if (errorMessage) { %><p style="color:red;"><%= errorMessage %></p><% } %>
-    <% if (successMessage) { %><p style="color:green;"><%= successMessage %></p><% } %>
+    <% if (errorMessage) { %>
+        <p style="color:red;">
+            <%= errorMessage %>
+        </p>
+        <% } %>
+            <% if (successMessage) { %>
+                <p style="color:green;">
+                    <%= successMessage %>
+                </p>
+                <% } %>
 
-    <form action="/verify" method="POST">
-        <label for="code">Code:</label>
-        <input type="text" id="code" name="code"
-               minlength="6" maxlength="6" pattern="\d{6}"
-               inputmode="numeric" autocomplete="one-time-code" required>
-        <button type="submit">Verify</button>
-    </form>
+                    <form action="/verify" method="POST">
+                        <label for="code">Code:</label>
+                        <input type="text" id="code" name="code" minlength="6" maxlength="6" pattern="\d{6}"
+                            inputmode="numeric" autocomplete="one-time-code" required>
+                        <button type="submit">Verify</button>
+                    </form>
 
-    <hr>
+                    <hr>
 
-    <form action="/verify/resend" method="POST">
-        <button type="submit">Resend code</button>
-    </form>
+                    <form action="/verify/resend" method="POST">
+                        <button type="submit">Resend code</button>
+                    </form>
+                    <hr>
+
+                    <form action="/verify/cancel" method="POST"
+                        onsubmit="return confirm('Cancel signup and delete this account? You will need to sign up again.');">
+                        <button type="submit">Cancel and start over</button>
+                    </form>
+
 </body>
+
 </html>
